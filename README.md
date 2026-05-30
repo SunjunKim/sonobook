@@ -7,7 +7,8 @@ It plays ordinary audio files **and** audio bundled inside `.zip` archives.
 
 - **Universal desktop app** — runs on Windows, macOS and Linux (Electron).
 - **Headphone app icon** — orange headphones on a black background (`assets/icon.svg`).
-- **Standard transport UI** — previous / play-pause / next, a volume slider with mute, a seek bar, and a playlist.
+- **Standard transport UI** — previous / play-pause / next, a volume slider with mute, a seek bar with current/total playtime, and a playlist.
+- **Playback speed** — a speed selector beside the transport buttons (0.5×–3× in 0.5× steps); the `1` / `2` / `3` keys jump straight to 1× / 2× / 3×. The chosen speed is kept across track changes.
 - **Smart drag & drop** — drag files/folders onto the window and the drop area splits in two:
   - **Add to end of playlist**
   - **Clear list & play this**
@@ -18,7 +19,7 @@ It plays ordinary audio files **and** audio bundled inside `.zip` archives.
 - **Media keys** — Play/Pause, Next, Previous (and best-effort volume keys) are registered **globally**, so they control playback even when ZipTune is in the background. Works out of the box on Windows/Linux. On **macOS**, receiving the hardware media keys requires Accessibility permission — the app detects this and prompts you to open System Settings → Privacy & Security → Accessibility; once granted, the keys start working automatically.
 - **Reorder by drag** — drag tracks within the playlist to change their order.
 - **Sort / Shuffle** — buttons at the bottom-left of the controls: natural A→Z sort and random shuffle.
-- **Compact mini-player mode** — the toggle in the top-right shrinks the window to a small always-on-top player showing just the now-playing cover + title, prev/play/next, volume, and the seek bar. Toggle again to restore the full window.
+- **Compact mini-player mode** — the toggle in the top-right shrinks the window to a small always-on-top player showing just the now-playing cover + title, prev/play/next, volume, the speed selector, and the seek bar with current/total playtime. Toggle again to restore the full window.
 
 ## Run it
 
@@ -48,6 +49,7 @@ npm run dist:linux    # AppImage + .deb
 | ↑ / ↓ | Volume up / down |
 | PageUp / PageDown | Previous / Next track |
 | Cmd + ← / → | Previous / Next track |
+| 1 / 2 / 3 | Playback speed 1× / 2× / 3× |
 
 Dropping files loads the first track but does **not** start playback — press Space (or Play) to begin.
 
