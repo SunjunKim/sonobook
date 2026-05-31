@@ -1,4 +1,4 @@
-# ZipTune 🎧
+# Sonobook Player 🎧
 
 A simple, cross-platform (Windows / macOS / Linux) audio player built with Electron.
 It plays ordinary audio files **and** audio bundled inside `.zip` archives.
@@ -16,7 +16,7 @@ It plays ordinary audio files **and** audio bundled inside `.zip` archives.
 - **Archive cover art** — if the zip contains an image (jpg/png/gif/webp/bmp/avif), it's shown as a cover above the secondary playlist. Names like `cover`, `folder`, `front`, `album`, or `art` are preferred; otherwise the first image is used.
 - **Per-track thumbnails** — each playlist row shows a small cover icon on the left: embedded album art for audio files (parsed via `music-metadata`), or the inner image for `.zip` items. Thumbnails load lazily and fall back to the track number.
 - **Natural ordering** — multiple dropped files are sorted so `aaa1, aaa2 … aaa9, aaa10, aaa11, aaa12` order numerically, not lexically.
-- **Media keys** — Play/Pause, Next, Previous (and best-effort volume keys) are registered **globally**, so they control playback even when ZipTune is in the background. Works out of the box on Windows/Linux. On **macOS**, receiving the hardware media keys requires Accessibility permission — the app detects this and prompts you to open System Settings → Privacy & Security → Accessibility; once granted, the keys start working automatically.
+- **Media keys** — Play/Pause, Next, Previous (and best-effort volume keys) are registered **globally**, so they control playback even when Sonobook Player is in the background. Works out of the box on Windows/Linux. On **macOS**, receiving the hardware media keys requires Accessibility permission — the app detects this and prompts you to open System Settings → Privacy & Security → Accessibility; once granted, the keys start working automatically.
 - **Reorder by drag** — drag tracks within the playlist to change their order.
 - **Sort / Shuffle** — buttons at the bottom-left of the controls: natural A→Z sort and random shuffle.
 - **Compact mini-player mode** — the toggle in the top-right shrinks the window to a small always-on-top player showing just the now-playing cover + title, prev/play/next, volume, the speed selector, and the seek bar with current/total playtime. Toggle again to restore the full window.
@@ -24,7 +24,7 @@ It plays ordinary audio files **and** audio bundled inside `.zip` archives.
 ## Run it
 
 ```bash
-cd audio-player
+cd sonobook
 npm install
 npm run icons   # render icon.png / icon.ico / icon.icns from the SVG
 npm start
@@ -63,4 +63,4 @@ mp3, m4a, m4b, aac, wav, flac, ogg, oga, opus, weba/webm, aiff, wma, mp4 — any
 
 - File loading uses `webSecurity: false` so local `file://` media can be read directly.
 - **Zip handling is streamed in the main process via `yauzl`** — listing reads only the archive's central directory, and a track or cover image is inflated one entry at a time, on demand. The whole archive is never loaded into memory or parsed on the UI thread, so dropping several large zips stays responsive. Extracted blob URLs are released when the archive closes.
-- Global volume media keys are owned by the OS on most systems; ZipTune registers them best-effort and always falls back to its own volume slider / in-window shortcuts.
+- Global volume media keys are owned by the OS on most systems; Sonobook Player registers them best-effort and always falls back to its own volume slider / in-window shortcuts.

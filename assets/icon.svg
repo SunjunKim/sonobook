@@ -1,29 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <!-- Black rounded background -->
-  <rect x="0" y="0" width="1024" height="1024" rx="220" ry="220" fill="#0a0a0a"/>
-  <rect x="0" y="0" width="1024" height="1024" rx="220" ry="220" fill="url(#bgGlow)"/>
   <defs>
-    <radialGradient id="bgGlow" cx="50%" cy="38%" r="62%">
-      <stop offset="0%" stop-color="#1a1a1a"/>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111111"/>
       <stop offset="100%" stop-color="#000000"/>
-    </radialGradient>
-    <linearGradient id="orange" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ff9d2e"/>
-      <stop offset="100%" stop-color="#f47e0a"/>
     </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="36%" r="68%">
+      <stop offset="0%" stop-color="#252525" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
-  <!-- Headphone: headband + two ear cups -->
-  <g fill="none" stroke="#FF7A00" stroke-width="64" stroke-linecap="round">
-    <!-- Headband arc -->
-    <path d="M 268 560 C 268 360, 412 250, 512 250 C 612 250, 756 360, 756 560"/>
-  </g>
+  <rect width="1024" height="1024" rx="220" fill="url(#background)"/>
+  <rect width="1024" height="1024" rx="220" fill="url(#glow)"/>
 
-  <!-- Left ear cup -->
-  <rect x="212" y="540" width="150" height="250" rx="58" ry="58" fill="#FF7A00"/>
-  <rect x="240" y="566" width="94" height="198" rx="40" ry="40" fill="#0a0a0a"/>
+  <!-- Thick filled headband with an open gap above the book. -->
+  <path d="M512 116C318 116 168 264 168 458H258C258 316 368 206 512 206C656 206 766 316 766 458H856C856 264 706 116 512 116Z" fill="#ff7a00"/>
 
-  <!-- Right ear cup -->
-  <rect x="662" y="540" width="150" height="250" rx="58" ry="58" fill="#FF7A00"/>
-  <rect x="690" y="566" width="94" height="198" rx="40" ry="40" fill="#0a0a0a"/>
+  <!-- Padded headphone ear cups, kept broad enough to read at small sizes. -->
+  <rect x="168" y="398" width="124" height="318" rx="62" fill="#ff7a00"/>
+  <rect x="732" y="398" width="124" height="318" rx="62" fill="#ff7a00"/>
+  <rect x="194" y="448" width="72" height="218" rx="36" fill="#121212"/>
+  <rect x="758" y="448" width="72" height="218" rx="36" fill="#121212"/>
+
+  <!-- Thick open-book pages. -->
+  <path d="M512 458C454 414 390 392 318 392V704C394 698 459 719 512 760Z" fill="#ffffff"/>
+  <path d="M512 458C570 414 634 392 706 392V704C630 698 565 719 512 760Z" fill="#ffffff"/>
+
+  <!-- Shifted left slightly so the triangular mass is visually centered. -->
+  <path d="M454 494C454 474 476 462 493 472L603 537C620 547 620 571 603 581L493 646C476 656 454 644 454 624Z" fill="#ff7a00"/>
 </svg>

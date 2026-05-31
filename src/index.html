@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' file: blob: data:; img-src 'self' data: blob:; media-src 'self' file: blob: data:; script-src 'self' file:; style-src 'self' 'unsafe-inline';" />
-  <title>ZipTune</title>
+  <title>Sonobook Player</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,20 +13,12 @@
     <header id="header">
       <div class="brand">
         <span class="logo" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="26" height="26">
-            <path d="M7 18 C7 11, 11 7, 16 7 C21 7, 25 11, 25 18" fill="none" stroke="#FF7A00" stroke-width="2.4" stroke-linecap="round"/>
-            <rect x="5.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-            <rect x="21.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-          </svg>
+          <img src="../assets/icon.svg" width="32" height="32" alt="" />
         </span>
-        <span class="brand-name">ZipTune</span>
+        <span class="brand-name">Sonobook Player</span>
       </div>
       <div class="np-art" id="npArt" aria-hidden="true">
-        <svg class="np-art-ph" viewBox="0 0 32 32" width="22" height="22">
-          <path d="M7 18 C7 11, 11 7, 16 7 C21 7, 25 11, 25 18" fill="none" stroke="#FF7A00" stroke-width="2.4" stroke-linecap="round"/>
-          <rect x="5.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-          <rect x="21.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-        </svg>
+        <img class="np-art-ph" src="../assets/icon.svg" alt="" />
         <img id="npArtImg" class="hidden" alt="" />
       </div>
       <div class="now-playing">
@@ -155,6 +147,7 @@
   </div>
 
   <audio id="audio"></audio>
+  <audio id="preloadAudio" preload="auto"></audio>
 
   <script src="natural-sort.js"></script>
   <script src="renderer.js"></script>

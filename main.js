@@ -41,7 +41,7 @@ function createWindow() {
     minWidth: 760,
     minHeight: 520,
     backgroundColor: '#0a0a0a',
-    title: 'ZipTune',
+    title: 'Sonobook Player',
     icon,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -114,8 +114,8 @@ function promptAccessibility() {
   dialog.showMessageBox(mainWindow || undefined, {
     type: 'info',
     title: 'Enable background media keys',
-    message: 'Let ZipTune respond to the keyboard media keys',
-    detail: 'macOS requires Accessibility permission for an app to receive the ▶︎ / ⏭ / ⏮ media keys while it is in the background.\n\nOpen System Settings → Privacy & Security → Accessibility, enable ZipTune, then return to the app — the keys will start working automatically.',
+    message: 'Let Sonobook Player respond to the keyboard media keys',
+    detail: 'macOS requires Accessibility permission for an app to receive the ▶︎ / ⏭ / ⏮ media keys while it is in the background.\n\nOpen System Settings → Privacy & Security → Accessibility, enable Sonobook Player, then return to the app — the keys will start working automatically.',
     buttons: ['Open Settings', 'Later'],
     defaultId: 0,
     cancelId: 1
