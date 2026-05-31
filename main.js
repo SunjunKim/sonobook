@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const yauzl = require('yauzl');
 const db = require('./db');
 const playlists = require('./playlists');
+const versionInfo = require('./version');
 
 let mainWindow = null;
 
@@ -65,7 +66,7 @@ function createWindow() {
     minWidth: 760,
     minHeight: 520,
     backgroundColor: '#0a0a0a',
-    title: 'Sonobook Player',
+    title: versionInfo.title,
     icon,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -78,6 +79,11 @@ function createWindow() {
 
   mainWindow.setMenuBarVisibility(false);
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setTitle(versionInfo.title);
+    }
+  });
 
   if (process.platform === 'darwin' && icon) {
     app.dock && app.dock.setIcon(icon);

@@ -51,6 +51,7 @@ let audio = $('audio');
 let standbyAudio = $('preloadAudio');
 
 const el = {
+  brandName: $('brandName'),
   npTitle: $('npTitle'), npSub: $('npSub'),
   npArt: $('npArt'), npArtImg: $('npArtImg'),
   compactBtn: $('compactBtn'), compactIcon: $('compactIcon'), expandIcon: $('expandIcon'),
@@ -66,6 +67,11 @@ const el = {
   seek: $('seek'), curTime: $('curTime'), durTime: $('durTime'),
   dropOverlay: $('dropOverlay'), dropAppend: $('dropAppend'), dropReplace: $('dropReplace')
 };
+
+if (window.api && window.api.appInfo) {
+  document.title = window.api.appInfo.title;
+  el.brandName.textContent = window.api.appInfo.title;
+}
 
 // ---------------------------------------------------------------------------
 // File-type helpers

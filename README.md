@@ -1,67 +1,125 @@
-# Sonobook Player 🎧
+# Sonobook Player
 
-A simple, cross-platform (Windows / macOS / Linux) audio player built with Electron.
-It plays ordinary audio files **and** audio bundled inside `.zip` archives.
+A simple cross-platform audio player built with Electron.
+It plays ordinary audio files and audio bundled inside `.zip` archives.
+
+Current app version: `0.2`
 
 ## Features
 
-- **Universal desktop app** — runs on Windows, macOS and Linux (Electron).
-- **Headphone app icon** — orange headphones on a black background (`assets/icon.svg`).
-- **Standard transport UI** — previous / play-pause / next, a volume slider with mute, a seek bar with current/total playtime, and a playlist.
-- **Playback speed** — a speed selector beside the transport buttons (0.5×–3× in 0.5× steps); the `1` / `2` / `3` keys jump straight to 1× / 2× / 3×. The chosen speed is kept across track changes.
-- **Smart drag & drop** — drag files/folders onto the window and the drop area splits in two:
-  - **Add to end of playlist**
-  - **Clear list & play this**
-- **Zip playback** — play a `.zip` and a **secondary playlist** opens listing the audio files inside; they play in order. When the archive finishes (or you pick another main track), the secondary list closes and playback moves to the next item.
-- **Archive cover art** — if the zip contains an image (jpg/png/gif/webp/bmp/avif), it's shown as a cover above the secondary playlist. Names like `cover`, `folder`, `front`, `album`, or `art` are preferred; otherwise the first image is used.
-- **Per-track thumbnails** — each playlist row shows a small cover icon on the left: embedded album art for audio files (parsed via `music-metadata`), or the inner image for `.zip` items. Thumbnails load lazily and fall back to the track number.
-- **Natural ordering** — multiple dropped files are sorted so `aaa1, aaa2 … aaa9, aaa10, aaa11, aaa12` order numerically, not lexically.
-- **Media keys** — Play/Pause, Next, Previous (and best-effort volume keys) are registered **globally**, so they control playback even when Sonobook Player is in the background. Works out of the box on Windows/Linux. On **macOS**, receiving the hardware media keys requires Accessibility permission — the app detects this and prompts you to open System Settings → Privacy & Security → Accessibility; once granted, the keys start working automatically.
-- **Reorder by drag** — drag tracks within the playlist to change their order.
-- **Sort / Shuffle** — buttons at the bottom-left of the controls: natural A→Z sort and random shuffle.
-- **Compact mini-player mode** — the toggle in the top-right shrinks the window to a small always-on-top player showing just the now-playing cover + title, prev/play/next, volume, the speed selector, and the seek bar with current/total playtime. Toggle again to restore the full window.
+- **Desktop app** - runs on Windows, macOS, and Linux through Electron.
+- **Audio and zip playback** - play normal audio files, or open a `.zip` and browse/play the audio entries inside it.
+- **Secondary archive playlist** - when a zip is selected, the app shows the archive's internal audio list without replacing the main playlist.
+- **Archive cover art** - if a zip contains an image (`jpg`, `png`, `gif`, `webp`, `bmp`, or `avif`), it is shown as archive art. Names such as `cover`, `folder`, `front`, `album`, and `art` are preferred.
+- **Per-track thumbnails** - playlist rows show embedded album art for audio files or archive art for zip items when available.
+- **Natural ordering** - multiple dropped files are sorted in numeric-friendly order, so `aaa2` comes before `aaa10`.
+- **Smart drag and drop** - drop files or folders onto the window, then choose whether to append them or replace the playlist.
+- **Playback controls** - previous, play/pause, next, seek, mute, volume, and playback speed controls.
+- **Playback speed shortcuts** - `1`, `2`, and `3` switch directly to 1x, 2x, and 3x speed.
+- **Global media keys** - Play/Pause, Next, Previous, and best-effort volume keys are registered globally. On macOS, hardware media keys may require Accessibility permission.
+- **Playlist management** - reorder by dragging, natural sort, shuffle, clear, and import/export `.m3u` playlists.
+- **Compact mini-player** - shrink the window to a small always-on-top player with artwork, now-playing text, transport controls, volume, speed, and seek.
+- **Persistent progress** - listened positions and playlist session data are stored under the OS application-data directory, not beside the installed app.
 
-## Run it
+## Run It
 
 ```bash
 cd sonobook
 npm install
-npm run icons   # render icon.png / icon.ico / icon.icns from the SVG
+npm run icons
 npm start
 ```
 
-## Build installers
+`npm run icons` renders `assets/icon.svg` into the raster icons used by Electron and installer packaging:
+
+- `assets/icon.png`
+- `assets/icon.ico`
+- `assets/icon.icns`
+
+## Build Installers
 
 ```bash
 npm run dist          # current platform
-npm run dist:mac      # .dmg / .zip
-npm run dist:win      # NSIS installer + portable
-npm run dist:linux    # AppImage + .deb
+npm run dist:mac      # dmg and zip
+npm run dist:win      # NSIS installer and portable build
+npm run dist:linux    # AppImage and deb
 ```
 
-## Keyboard shortcuts (in-window)
+Each `dist` script runs `npm run sync-version` first, then regenerates icons, then runs `electron-builder`.
+
+On Windows, Electron Builder may need permission to create symlinks while extracting its signing helper cache. If a normal Windows build fails there, enabling Developer Mode or running from an elevated shell usually resolves it.
+
+## Versioning
+
+Version information is managed from [version.js](./version.js).
+
+The version stub currently defines:
+
+```js
+const version = '0.2';
+```
+
+That single stub is used for:
+
+- the app window title and visible header: `Sonobook Player v0.2`
+- Git tag name: `v0.2`
+- package metadata for distribution
+
+npm and Electron Builder require strict SemVer, so the packaging version is derived as `0.2.0` and synced into `package.json` and `package-lock.json`.
+
+Useful commands:
+
+```bash
+npm run sync-version      # sync package.json and package-lock.json from version.js
+npm run tag               # create local annotated tag v0.2
+npm run github:tag        # sync version, create the tag if needed, and push it to origin
+```
+
+The tag script is idempotent for an existing local tag. For a non-mutating check, run:
+
+```bash
+npm run tag -- --dry-run
+```
+
+## Keyboard Shortcuts
 
 | Key | Action |
 | --- | --- |
 | Space | Play / Pause |
-| ← / → | Seek −5s / +5s |
-| Ctrl + ← / → | Seek −30s / +30s |
-| ↑ / ↓ | Volume up / down |
+| Left / Right | Seek -5s / +5s |
+| Ctrl + Left / Right | Seek -30s / +30s |
+| Up / Down | Volume up / down |
 | PageUp / PageDown | Previous / Next track |
-| Cmd + ← / → | Previous / Next track |
-| 1 / 2 / 3 | Playback speed 1× / 2× / 3× |
+| Cmd + Left / Right | Previous / Next track on macOS |
+| 1 / 2 / 3 | Playback speed 1x / 2x / 3x |
 
-Dropping files loads the first track but does **not** start playback — press Space (or Play) to begin.
+Dropping files loads the first track but does not start playback. Press Space or Play to begin.
 
-Plus the OS media keys (▶❚❚, ⏭, ⏮).
+The app also listens for OS media keys when the platform allows it.
 
-## Supported audio
+## Supported Audio
 
-mp3, m4a, m4b, aac, wav, flac, ogg, oga, opus, weba/webm, aiff, wma, mp4 — anything Chromium can decode. Files with unsupported codecs are skipped automatically.
+`mp3`, `m4a`, `m4b`, `aac`, `wav`, `flac`, `ogg`, `oga`, `opus`, `weba`, `webm`, `aiff`, `wma`, and `mp4`.
 
-## Notes
+Support ultimately depends on what Chromium can decode. Files with unsupported codecs are skipped automatically.
 
-- File loading uses `webSecurity: false` so local `file://` media can be read directly.
-- Runtime-generated files, including progress, session playlists, logs, caches, and crash dumps, are stored under the OS-standard application-data directory for `Sonobook Player`, never beside the installed app.
-- **Zip handling is streamed in the main process via `yauzl`** — listing reads only the archive's central directory, and a track or cover image is inflated one entry at a time, on demand. The whole archive is never loaded into memory or parsed on the UI thread, so dropping several large zips stays responsive. Extracted blob URLs are released when the archive closes.
-- Global volume media keys are owned by the OS on most systems; Sonobook Player registers them best-effort and always falls back to its own volume slider / in-window shortcuts.
+## Runtime Data
+
+Runtime-generated files are stored under the OS-standard app-data directory for `Sonobook Player`, including:
+
+- progress database
+- session playlists
+- logs
+- caches
+- crash dumps
+
+The installed app directory stays read-only.
+
+## Implementation Notes
+
+- The renderer loads local media through `file://` URLs, so the Electron window uses `webSecurity: false`.
+- Zip handling is streamed in the main process through `yauzl`.
+- Zip listing reads only the archive central directory.
+- Zip track and cover reads inflate one entry at a time, on demand.
+- Extracted blob URLs are released when the archive closes.
+- The preload script exposes a small `window.api` bridge for filesystem, zip, progress, playlist, media-key, and app-version operations.

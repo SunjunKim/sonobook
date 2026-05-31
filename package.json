@@ -1,7 +1,7 @@
 {
   "name": "sonobook",
   "productName": "Sonobook Player",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "A simple cross-platform audio player that also plays audio from zip archives.",
   "main": "main.js",
   "homepage": "https://github.com/SunjunKim/sonobook",
@@ -11,12 +11,15 @@
   },
   "license": "MIT",
   "scripts": {
+    "sync-version": "node tools/sync-version.js",
     "start": "electron .",
     "icons": "node build-icons.js",
-    "dist": "npm run icons && electron-builder",
-    "dist:mac": "npm run icons && electron-builder --mac",
-    "dist:win": "npm run icons && electron-builder --win",
-    "dist:linux": "npm run icons && electron-builder --linux"
+    "dist": "npm run sync-version && npm run icons && electron-builder",
+    "dist:mac": "npm run sync-version && npm run icons && electron-builder --mac",
+    "dist:win": "npm run sync-version && npm run icons && electron-builder --win",
+    "dist:linux": "npm run sync-version && npm run icons && electron-builder --linux",
+    "tag": "node tools/github-tag.js",
+    "github:tag": "npm run sync-version && node tools/github-tag.js --push"
   },
   "dependencies": {
     "music-metadata": "^10.6.0",
@@ -34,6 +37,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "version.js",
       "db.js",
       "playlists.js",
       "src/**/*",

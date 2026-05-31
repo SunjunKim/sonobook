@@ -1,6 +1,7 @@
 'use strict';
 
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
+const versionInfo = require('./version');
 
 // Build a file:// URL from an absolute path. Self-contained because a sandboxed
 // preload's require('url') does NOT provide pathToFileURL. Handles POSIX and
@@ -17,6 +18,13 @@ function toFileURL(p) {
 }
 
 contextBridge.exposeInMainWorld('api', {
+  appInfo: {
+    name: versionInfo.name,
+    version: versionInfo.version,
+    title: versionInfo.title,
+    tagName: versionInfo.tagName
+  },
+
   // Resolve the absolute path of a dropped File (Electron 32+ removed File.path).
   getPathForFile: (file) => {
     try {
