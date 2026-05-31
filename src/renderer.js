@@ -15,8 +15,9 @@ const IMAGE_EXT = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'avif']);
 let uid = 0;
 const state = {
   playlist: [],        // { id, name, kind: 'audio'|'zip', path }
-  currentIndex: -1,    // index into playlist of the active main item
-  zip: null            // { name, path, mainIndex, entries:[{name,internalPath,blobUrl}], index, coverUrl }
+  currentIndex: -1,    // index into playlist of the active (playing/loaded) item
+  selectedId: null,    // id of the single-click-highlighted item (selection only)
+  zip: null            // { name, path, mainIndex, entries:[...], index, selIndex, coverUrl }
 };
 
 // Last-played-position store, loaded once from the main process. The renderer
@@ -167,7 +168,9 @@ function renderMainList() {
 
   state.playlist.forEach((item, i) => {
     const li = document.createElement('li');
-    li.className = 'track' + (i === state.currentIndex ? ' active' : '');
+    const current = i === state.currentIndex;            // playing / loaded
+    const selected = !current && item.id === state.selectedId; // single-click pick
+    li.className = 'track' + (current ? ' active' : '') + (selected ? ' selected' : '');
     li.draggable = true;
     li.dataset.index = String(i);
 
@@ -180,16 +183,11 @@ function renderMainList() {
       '<span class="remove" title="Remove">✕</span>' +
       '<span class="track-progress"><span class="track-progress-fill"></span></span>';
 
-    // Single click selects (audio: load, no play; zip: open its chapter list).
-    // Double click actually plays (zip: resumes at the saved chapter/position).
+    // Single click only selects (highlights) — never disturbs playback.
+    // Double click plays (zip: resumes at the saved chapter/position).
     li.addEventListener('click', (e) => {
       if (e.target.classList.contains('remove')) { removeItem(i); return; }
-      const it = state.playlist[i];
-      if (it && it.kind === 'zip') {
-        if (!it.missing && !(state.zip && state.zip.mainIndex === i)) expandZip(i);
-      } else if (i !== state.currentIndex) {
-        playIndex(i, false);
-      }
+      selectMain(i);
     });
     li.addEventListener('dblclick', (e) => {
       if (e.target.classList.contains('remove')) return;
@@ -751,15 +749,17 @@ function renderSubList() {
   el.subList.innerHTML = '';
   state.zip.entries.forEach((entry, i) => {
     const li = document.createElement('li');
-    li.className = 'track' + (i === state.zip.index ? ' active' : '');
+    const curCh = i === state.zip.index;
+    const selCh = !curCh && i === state.zip.selIndex;
+    li.className = 'track' + (curCh ? ' active' : '') + (selCh ? ' selected' : '');
     const playing = i === state.zip.index && !audio.paused;
     li.innerHTML =
       `<span class="idx">${playing ? EQ_SVG : i + 1}</span>` +
       `<span class="name">${escapeHtml(entry.name)}</span>` +
       '<span class="track-time"></span>' +
       '<span class="track-progress"><span class="track-progress-fill"></span></span>';
-    // Single click selects the chapter; double click plays it.
-    li.addEventListener('click', () => { if (!state.zip || i !== state.zip.index) playSub(i, false); });
+    // Single click selects the chapter (no playback change); double click plays.
+    li.addEventListener('click', () => selectSub(i));
     li.addEventListener('dblclick', () => playSub(i, true));
     el.subList.appendChild(li);
     applySubUnderline(li, i);
@@ -798,6 +798,7 @@ function playIndex(i, autoplay = true) {
   // Selecting any main item closes an open archive (requirement 5).
   exitZip(false);
   state.currentIndex = i;
+  state.selectedId = state.playlist[i].id; // selection follows the now-current item
   playIntent = autoplay; // selecting without autoplay must not trigger auto-skip
   const item = state.playlist[i];
 
@@ -879,7 +880,7 @@ async function openZip(item, mainIndex, autoplay = true) {
 
   item.zipEntries = entries; // index-aligned with the saved `e` map
   lastScroll.sub = -1;       // fresh archive → allow the first scroll
-  state.zip = { name: item.name, path: item.path, mainIndex, entries, index: -1, coverUrl: null };
+  state.zip = { name: item.name, path: item.path, mainIndex, entries, index: -1, selIndex: -1, coverUrl: null };
   el.subPanel.classList.remove('hidden');
   renderSubList();
   loadCover(pickCover(images));
@@ -931,6 +932,7 @@ async function playSub(i, autoplay = true) {
   pendingSeek = null;
   playIntent = autoplay; // expand (no autoplay) must not arm auto-skip
   state.zip.index = i;
+  state.zip.selIndex = i; // selection follows the now-playing chapter
   const entry = state.zip.entries[i];
   const zipPath = state.zip.path;
   const zipItem = state.playlist[state.zip.mainIndex];
@@ -1693,6 +1695,19 @@ function showContextMenu(x, y, items) {
 }
 
 function closeContextMenu() { $('ctxMenu').classList.add('hidden'); }
+
+// Single-click selection (highlight only; never touches playback).
+function selectMain(i) {
+  const item = state.playlist[i];
+  if (!item) return;
+  state.selectedId = item.id;
+  renderMainList();
+}
+function selectSub(i) {
+  if (!state.zip) return;
+  state.zip.selIndex = i;
+  renderSubList();
+}
 
 // Right-click menu for a main entry — item-specific actions only.
 function openEntryMenu(e, i) {
