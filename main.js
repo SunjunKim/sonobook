@@ -10,6 +10,30 @@ const playlists = require('./playlists');
 
 let mainWindow = null;
 
+// Keep every runtime-generated file out of the install directory. Electron's
+// appData root maps to the OS-standard location on Windows, macOS, and Linux.
+function configureAppDataPaths() {
+  const appDataDir = path.join(app.getPath('appData'), 'Sonobook Player');
+  const generatedDirs = {
+    userData: appDataDir,
+    sessionData: path.join(appDataDir, 'session'),
+    logs: path.join(appDataDir, 'logs'),
+    crashDumps: path.join(appDataDir, 'crashDumps')
+  };
+
+  for (const dir of Object.values(generatedDirs)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  app.setPath('userData', generatedDirs.userData);
+  app.setPath('sessionData', generatedDirs.sessionData);
+  app.setAppLogsPath(generatedDirs.logs);
+  app.setPath('crashDumps', generatedDirs.crashDumps);
+  return appDataDir;
+}
+
+const appDataDir = configureAppDataPaths();
+
 // Audio extensions — kept in sync with the renderer; used by the zip fingerprint
 // so it hashes only the audio chapters (a re-saved cover image won't reset it).
 const FP_AUDIO_EXT = new Set([
@@ -388,8 +412,8 @@ ipcMain.on('set-compact', (_evt, compact) => {
 });
 
 app.whenReady().then(() => {
-  db.load(app.getPath('userData'));
-  playlists.load(app.getPath('userData'));
+  db.load(appDataDir);
+  playlists.load(appDataDir);
   createWindow();
   registerMediaKeys();
 

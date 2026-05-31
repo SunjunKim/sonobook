@@ -62,5 +62,6 @@ mp3, m4a, m4b, aac, wav, flac, ogg, oga, opus, weba/webm, aiff, wma, mp4 — any
 ## Notes
 
 - File loading uses `webSecurity: false` so local `file://` media can be read directly.
+- Runtime-generated files, including progress, session playlists, logs, caches, and crash dumps, are stored under the OS-standard application-data directory for `Sonobook Player`, never beside the installed app.
 - **Zip handling is streamed in the main process via `yauzl`** — listing reads only the archive's central directory, and a track or cover image is inflated one entry at a time, on demand. The whole archive is never loaded into memory or parsed on the UI thread, so dropping several large zips stays responsive. Extracted blob URLs are released when the archive closes.
 - Global volume media keys are owned by the OS on most systems; Sonobook Player registers them best-effort and always falls back to its own volume slider / in-window shortcuts.
