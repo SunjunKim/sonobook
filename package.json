@@ -1,22 +1,25 @@
 {
-  "name": "ziptune",
-  "productName": "ZipTune",
-  "version": "1.0.0",
+  "name": "sonobook",
+  "productName": "Sonobook Player",
+  "version": "0.2.0",
   "description": "A simple cross-platform audio player that also plays audio from zip archives.",
   "main": "main.js",
-  "homepage": "https://github.com/ziptune/ziptune",
+  "homepage": "https://github.com/SunjunKim/sonobook",
   "author": {
-    "name": "ZipTune",
-    "email": "ziptune@example.com"
+    "name": "Sonobook Player",
+    "email": "sonobook@example.com"
   },
   "license": "MIT",
   "scripts": {
+    "sync-version": "node tools/sync-version.js",
     "start": "electron .",
     "icons": "node build-icons.js",
-    "dist": "npm run icons && electron-builder",
-    "dist:mac": "npm run icons && electron-builder --mac",
-    "dist:win": "npm run icons && electron-builder --win",
-    "dist:linux": "npm run icons && electron-builder --linux"
+    "dist": "npm run sync-version && npm run icons && electron-builder",
+    "dist:mac": "npm run sync-version && npm run icons && electron-builder --mac",
+    "dist:win": "npm run sync-version && npm run icons && electron-builder --win",
+    "dist:linux": "npm run sync-version && npm run icons && electron-builder --linux",
+    "tag": "node tools/github-tag.js",
+    "github:tag": "npm run sync-version && node tools/github-tag.js --push"
   },
   "dependencies": {
     "music-metadata": "^10.6.0",
@@ -29,11 +32,14 @@
     "sharp": "^0.33.5"
   },
   "build": {
-    "appId": "com.ziptune.app",
-    "productName": "ZipTune",
+    "appId": "com.sonobook.player",
+    "productName": "Sonobook Player",
     "files": [
       "main.js",
       "preload.js",
+      "version.js",
+      "db.js",
+      "playlists.js",
       "src/**/*",
       "assets/icon.*",
       "node_modules/**/*"
@@ -50,7 +56,7 @@
     "linux": {
       "icon": "assets/icon.png",
       "category": "AudioVideo",
-      "maintainer": "ZipTune <ziptune@example.com>",
+      "maintainer": "Sonobook Player <sonobook@example.com>",
       "target": ["AppImage", "deb"]
     }
   }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' file: blob: data:; img-src 'self' data: blob:; media-src 'self' file: blob: data:; script-src 'self' file:; style-src 'self' 'unsafe-inline';" />
-  <title>ZipTune</title>
+  <title>Sonobook Player</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,20 +13,12 @@
     <header id="header">
       <div class="brand">
         <span class="logo" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="26" height="26">
-            <path d="M7 18 C7 11, 11 7, 16 7 C21 7, 25 11, 25 18" fill="none" stroke="#FF7A00" stroke-width="2.4" stroke-linecap="round"/>
-            <rect x="5.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-            <rect x="21.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-          </svg>
+          <img src="../assets/icon.svg" width="32" height="32" alt="" />
         </span>
-        <span class="brand-name">ZipTune</span>
+        <span class="brand-name" id="brandName">Sonobook Player</span>
       </div>
       <div class="np-art" id="npArt" aria-hidden="true">
-        <svg class="np-art-ph" viewBox="0 0 32 32" width="22" height="22">
-          <path d="M7 18 C7 11, 11 7, 16 7 C21 7, 25 11, 25 18" fill="none" stroke="#FF7A00" stroke-width="2.4" stroke-linecap="round"/>
-          <rect x="5.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-          <rect x="21.5" y="17" width="5" height="9" rx="2.2" fill="#FF7A00"/>
-        </svg>
+        <img class="np-art-ph" src="../assets/icon.svg" alt="" />
         <img id="npArtImg" class="hidden" alt="" />
       </div>
       <div class="now-playing">
@@ -44,9 +36,28 @@
       <section class="panel" id="mainPanel">
         <div class="panel-head">
           <h2>Playlist</h2>
-          <span class="count" id="mainCount">0 tracks</span>
+          <div class="head-right">
+            <span class="count" id="mainCount">0 tracks</span>
+            <button class="icon-btn small" id="listMenuBtn" title="Playlist actions">
+              <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="5" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="19" r="1.7" fill="currentColor"/></svg>
+            </button>
+          </div>
         </div>
         <ul class="track-list" id="mainList"></ul>
+        <div class="list-bar" id="listBar">
+          <button class="list-btn" id="saveListBtn" title="Save this playlist to an .m3u file">
+            <svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Save</span>
+          </button>
+          <button class="list-btn" id="loadListBtn" title="Load a playlist from an .m3u file">
+            <svg viewBox="0 0 24 24" width="15" height="15"><path d="M3 6h7l2 2h9v11H3zM7 13l5 4 5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Load</span>
+          </button>
+          <button class="list-btn danger" id="clearListBtn" title="Clear the playlist">
+            <svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Clear</span>
+          </button>
+        </div>
       </section>
 
       <section class="panel sub-panel hidden" id="subPanel">
@@ -123,7 +134,20 @@
     </div>
   </div>
 
+  <!-- Right-click context menu (populated dynamically) -->
+  <div id="ctxMenu" class="ctx-menu hidden"></div>
+
+  <!-- Reusable modal (confirmations) -->
+  <div id="modalOverlay" class="hidden">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
   <audio id="audio"></audio>
+  <audio id="preloadAudio" preload="auto"></audio>
 
   <script src="natural-sort.js"></script>
   <script src="renderer.js"></script>
